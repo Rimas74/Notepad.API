@@ -18,13 +18,15 @@ namespace Notepad.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDataAccessServices(builder.Configuration.GetConnectionString("DefaultConnection"));
+            builder.Services.AddBusinessLogicServices();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-            builder.Services.AddDbContext<NotepadContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<NotepadContext>()
