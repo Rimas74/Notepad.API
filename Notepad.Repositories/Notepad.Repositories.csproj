@@ -7,11 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Notepad.DataAccess\Notepad.DataAccess.csproj" />
+		<Folder Include="NewFolder\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="NewFolder\" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
 	</ItemGroup>
 
 </Project>
