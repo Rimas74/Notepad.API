@@ -13,6 +13,8 @@ namespace Notepad.BusinessLogic
         {
             services.AddScoped<INoteService, NoteService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddSingleton<FileManager>(provider =>
+                new FileManager(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")));
             return services;
         }
     }

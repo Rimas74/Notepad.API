@@ -11,11 +11,13 @@ namespace Notepad.BusinessLogic
     public class NoteService : INoteService
     {
         private readonly INoteRepository _noteRepository;
+        private readonly FileManager _fileManager;
         private readonly IMapper _mapper;
 
-        public NoteService(INoteRepository noteRepository, IMapper mapper)
+        public NoteService(INoteRepository noteRepository, FileManager fileManager, IMapper mapper)
         {
             _noteRepository = noteRepository;
+            _fileManager = fileManager;
             _mapper = mapper;
         }
 
@@ -49,19 +51,33 @@ namespace Notepad.BusinessLogic
         public async Task CreateNoteAsync(NoteDTO noteDto)
         {
             var note = _mapper.Map<Note>(noteDto);
+            if (noteDto.Image != null)
+            {
+                note.ImagePath = await _fileManager.SaveImageAsync(noteDto.Image);
+            }
             await _noteRepository.AddAsync(note);
         }
 
-        public async Task UpdateNoteAsync(int id, NoteUpdateDTO noteUpdateDto)
+        public async Task UpdateNoteAsync(NoteUpdateDTO noteUpdateDto)
         {
-            var note = await _noteRepository.GetByIdAsync(id);
+            var note = await _noteRepository.GetByIdAsync(noteUpdateDto.NoteId);
             _mapper.Map(noteUpdateDto, note);
+
+            if (noteUpdateDto.Image != null)
+            {
+                note.ImagePath = await _fileManager.SaveImageAsync(noteUpdateDto.Image);
+            }
             await _noteRepository.UpdateAsync(note);
         }
 
         public async Task DeleteNoteAsync(int id)
         {
-            await _noteRepository.DeleteAsync(id);
+            var note = await _noteRepository.GetByIdAsync(id);
+            if (note != null)
+            {
+                await _noteRepository.DeleteAsync(note);
+            }
+
         }
     }
 }

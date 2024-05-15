@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Notepad.BusinessLogic
 {
-    public class FileManager
+    public class FileManager : IFileManager
     {
         private readonly string _basePath;
 
@@ -19,7 +19,7 @@ namespace Notepad.BusinessLogic
         }
         public async Task<string> SaveImageAsync(IFormFile file)
         {
-            var fileName = Path.GetFileName(file.FileName);
+            var fileName = Guid.NewGuid().ToString() + Path.GetFileName(file.FileName);
             var filePath = Path.Combine(_basePath, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))

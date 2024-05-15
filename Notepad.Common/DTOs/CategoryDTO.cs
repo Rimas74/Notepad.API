@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Notepad.Repositories.Entities
+namespace Notepad.Common.DTOs
 {
-    public class Category
+    public class CategoryDTO
     {
         public int CategoryId { get; set; }
         public string Name { get; set; }
         public string UserId { get; set; }
-        public User User { get; set; }
-        public ICollection<Note> Notes { get; set; }
+
     }
 }

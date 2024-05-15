@@ -11,9 +11,10 @@ namespace Notepad.Repositories
     {
         Task<Category> GetAsyncById(int id);
         Task<IEnumerable<Category>> GetAllAsync();
+        Task<IEnumerable<Category>> GetCategoriesByUserIdAsync(string userId);
         Task AddAsync(Category category);
         Task UpdateAsync(Category category);
         Task DeleteAsync(Category category);
-        Task<IEnumerable<Category>> GetCategoriesByUserId();
+
     }
 }

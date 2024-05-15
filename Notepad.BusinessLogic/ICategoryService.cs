@@ -1,4 +1,5 @@
-﻿using Notepad.DataAccess;
+﻿using Notepad.Common.DTOs;
+using Notepad.DataAccess;
 using Notepad.Repositories.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,14 @@ using System.Threading.Tasks;
 
 namespace Notepad.BusinessLogic
 {
-    public interface ICategoryService : IService<Category>
+    public interface ICategoryService
     {
-        Task<IEnumerable<Category>> GetCategoriesByUserIdAsync(string userId);
+
+        Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync();
+        Task<IEnumerable<CategoryDTO>> GetCategoriesByUserIdAsync(string userId);
+        Task<CategoryDTO> GetCategoryByIdAsync(int id);
+        Task CreateCategoryAsync(CategoryDTO categoryDTO);
+        Task UpdateCategoryAsync(CategoryDTO categoryDTO);
+        Task DeleteCategoryAsync(int id);
     }
 }

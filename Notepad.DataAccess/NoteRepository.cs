@@ -26,15 +26,12 @@ namespace Notepad.DataAccess
 
 
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Note entity)
         {
-            var noteToDelete = await GetByIdAsync(id);
-            if (noteToDelete != null)
-            {
-                _context.Notes.Remove(noteToDelete);
-                _context.SaveChanges();
-            }
+            _context.Notes.Remove(entity);
+            _context.SaveChanges();
         }
+
 
         public IQueryable<Note> GetAll()
         {

@@ -47,6 +47,7 @@ namespace Notepad.API.Controllers
             await _noteService.CreateNoteAsync(noteDto);
             return CreatedAtAction(nameof(GetNoteById), new { id = noteDto.NoteId }, noteDto);
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNote(int id, [FromBody] NoteUpdateDTO noteUpdateDto)
         {
@@ -55,7 +56,7 @@ namespace Notepad.API.Controllers
                 return BadRequest("Note ID mismatch");
             }
 
-            await _noteService.UpdateNoteAsync(id, noteUpdateDto);
+            await _noteService.UpdateNoteAsync(noteUpdateDto);
             return NoContent();
         }
         [HttpDelete("{id}")]
