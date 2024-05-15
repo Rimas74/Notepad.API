@@ -22,20 +22,8 @@ namespace Notepad.DataAccess
 
             services.AddDbContext<NotepadContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("Notepad.DataAccess")));
+        b => b.MigrationsAssembly("Notepad.API")));
 
-
-            services.AddIdentity<User, IdentityRole>(options =>
-            {
-                options.Password.RequiredLength = 8;
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = false;
-                options.User.RequireUniqueEmail = true;
-            })
-            .AddEntityFrameworkStores<NotepadContext>()
-            .AddDefaultTokenProviders();
 
             services.AddScoped<INoteRepository, NoteRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();

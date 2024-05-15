@@ -29,9 +29,17 @@ namespace Notepad.API
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-            builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<NotepadContext>()
-    .AddDefaultTokenProviders();
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.User.RequireUniqueEmail = true;
+            })
+           .AddEntityFrameworkStores<NotepadContext>()
+           .AddDefaultTokenProviders();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -47,7 +55,7 @@ namespace Notepad.API
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
             builder.Services.AddSingleton(new FileManager(basePath));
 
             builder.Services.AddEndpointsApiExplorer();
@@ -63,12 +71,13 @@ namespace Notepad.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "images")),
+                FileProvider = new PhysicalFileProvider(basePath),
                 RequestPath = "/images"
             });
 

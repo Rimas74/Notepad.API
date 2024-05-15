@@ -15,7 +15,7 @@ namespace Notepad.BusinessLogic
         Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string name, int? categoryId);
         Task<IEnumerable<NoteDTO>> GetNotesByUserIdAsync(string userId);
         Task<NoteDTO> GetNoteByIdAsync(int id);
-        Task CreateNoteAsync(NoteDTO noteDto);
+        Task<NoteDTO> CreateNoteAsync(CreateNoteDTO noteDto, string userId);
         Task UpdateNoteAsync(NoteUpdateDTO noteUpdateDto);
         Task DeleteNoteAsync(int id);
     }

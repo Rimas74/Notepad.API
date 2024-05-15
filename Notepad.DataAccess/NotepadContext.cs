@@ -17,6 +17,26 @@ namespace Notepad.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Category>().HasKey(c => c.CategoryId);
+            modelBuilder.Entity<Note>().HasKey(n => n.NoteId);
+
+            modelBuilder.Entity<Note>()
+        .HasOne(n => n.User)
+        .WithMany(u => u.Notes)
+        .HasForeignKey(n => n.UserId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<Note>()
+                .HasOne(n => n.Category)
+                .WithMany(c => c.Notes)
+                .HasForeignKey(n => n.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Category>()
+        .HasOne(c => c.User)
+        .WithMany(u => u.Categories)
+        .HasForeignKey(c => c.UserId);
         }
     }
 }

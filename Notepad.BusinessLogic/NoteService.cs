@@ -48,14 +48,19 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<NoteDTO>(note);
         }
 
-        public async Task CreateNoteAsync(NoteDTO noteDto)
+        public async Task<NoteDTO> CreateNoteAsync(CreateNoteDTO createNoteDto, string userId)
         {
-            var note = _mapper.Map<Note>(noteDto);
-            if (noteDto.Image != null)
+            var note = _mapper.Map<Note>(createNoteDto);
+            note.UserId = userId;
+
+            if (createNoteDto.Image != null)
             {
-                note.ImagePath = await _fileManager.SaveImageAsync(noteDto.Image);
+                note.ImagePath = await _fileManager.SaveImageAsync(createNoteDto.Image);
             }
+
             await _noteRepository.AddAsync(note);
+
+            return _mapper.Map<NoteDTO>(note);
         }
 
         public async Task UpdateNoteAsync(NoteUpdateDTO noteUpdateDto)

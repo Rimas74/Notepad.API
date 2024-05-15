@@ -15,6 +15,12 @@ namespace Notepad.BusinessLogic
         {
             CreateMap<NoteUpdateDTO, Note>().ReverseMap();
             CreateMap<Note, NoteDTO>().ReverseMap();
+            CreateMap<CreateNoteDTO, Note>()
+                .ForMember(dest => dest.NoteId, opt => opt.Ignore())
+                .ForMember(dest => dest.ImagePath, opt => opt.Ignore())
+                .ReverseMap();
+
+
             CreateMap<CategoryDTO, Category>()
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

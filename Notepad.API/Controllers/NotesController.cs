@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Notepad.BusinessLogic;
 using Notepad.Common.DTOs;
+using System.Security.Claims;
 
 namespace Notepad.API.Controllers
 {
@@ -42,10 +43,16 @@ namespace Notepad.API.Controllers
             return Ok(notes);
         }
         [HttpPost]
-        public async Task<ActionResult<NoteDTO>> CreateNote([FromBody] NoteDTO noteDto)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<NoteDTO>> CreateNote([FromBody] CreateNoteDTO createNoteDto)
         {
-            await _noteService.CreateNoteAsync(noteDto);
-            return CreatedAtAction(nameof(GetNoteById), new { id = noteDto.NoteId }, noteDto);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var createdNote = await _noteService.CreateNoteAsync(createNoteDto, userId);
+            if (createdNote == null)
+            {
+                return BadRequest("Failed to create the note.");
+            }
+            return CreatedAtAction(nameof(GetNoteById), new { id = createdNote.NoteId }, createdNote);
         }
 
         [HttpPut("{id}")]
