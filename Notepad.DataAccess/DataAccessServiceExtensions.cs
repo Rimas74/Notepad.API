@@ -10,16 +10,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Notepad.DataAccess
 {
     public static class DataAccessServiceExtensions
     {
-        public static IServiceCollection AddDataAccessServices(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddDataAccessServices(this IServiceCollection services, IConfiguration configuration) //string connectionString
         {
 
-            services.AddDbContext<NotepadContext>(options => options.UseSqlServer(connectionString));
 
+            services.AddDbContext<NotepadContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+        b => b.MigrationsAssembly("Notepad.DataAccess")));
 
 
             services.AddIdentity<User, IdentityRole>(options =>
@@ -35,7 +38,7 @@ namespace Notepad.DataAccess
             .AddDefaultTokenProviders();
 
             services.AddScoped<INoteRepository, NoteRepository>();
-            //services.AddScoped<ICategoryRepository,CategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             return services;
         }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 
 namespace Notepad.API
@@ -18,7 +19,7 @@ namespace Notepad.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDataAccessServices(builder.Configuration.GetConnectionString("DefaultConnection"));
+            builder.Services.AddDataAccessServices(builder.Configuration);
             builder.Services.AddBusinessLogicServices();
 
             // Add services to the container.
@@ -64,6 +65,12 @@ namespace Notepad.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "images")),
+                RequestPath = "/images"
+            });
 
 
             app.MapControllers();

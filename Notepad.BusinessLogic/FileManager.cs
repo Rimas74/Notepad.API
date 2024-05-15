@@ -29,19 +29,19 @@ namespace Notepad.BusinessLogic
             return filePath;
         }
 
-        public bool IsPathValid(string path)
-        {
-            var fullPath = Path.GetFullPath(path);
-            return fullPath.StartsWith(_basePath) && File.Exists(fullPath);
-        }
-        public byte[] GetImage(string filePath)
-        {
-            if (!IsPathValid(filePath))
-            {
-                throw new FileNotFoundException("The file path is not valid or the file does not exist.");
-            }
+        //public bool IsPathValid(string path)
+        //{
+        //    var fullPath = Path.GetFullPath(path);
+        //    return fullPath.StartsWith(_basePath) && File.Exists(fullPath);
+        //}
+        //public byte[] GetImage(string filePath)
+        //{
+        //    if (!IsPathValid(filePath))
+        //    {
+        //        throw new FileNotFoundException("The file path is not valid or the file does not exist.");
+        //    }
 
-            return File.ReadAllBytes(filePath);
-        }
+        //    return File.ReadAllBytes(filePath);
+        //}
     }
 }
