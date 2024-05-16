@@ -21,8 +21,7 @@ namespace Notepad.DataAccess
 
 
             services.AddDbContext<NotepadContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("Notepad.API")));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
 
             services.AddScoped<INoteRepository, NoteRepository>();

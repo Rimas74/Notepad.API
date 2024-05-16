@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Notepad.Repositories.Entities;
 
@@ -35,7 +36,8 @@ namespace Notepad.DataAccess
             modelBuilder.Entity<Category>()
         .HasOne(c => c.User)
         .WithMany(u => u.Categories)
-        .HasForeignKey(c => c.UserId);
+        .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

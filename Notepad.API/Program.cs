@@ -9,6 +9,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 
 namespace Notepad.API
@@ -29,7 +31,7 @@ namespace Notepad.API
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            builder.Services.AddDefaultIdentity<User>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireDigit = true;
@@ -59,7 +61,37 @@ namespace Notepad.API
             builder.Services.AddSingleton(new FileManager(basePath));
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Notepad API", Version = "v1" });
+
+                // Add JWT Authentication to Swagger
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Description = "Input your JWT token in this format - Bearer {your token here} to access this API",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                };
+
+                c.AddSecurityDefinition("Bearer", securitySchema);
+
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    { securitySchema, new[] { "Bearer" } }
+                };
+
+                c.AddSecurityRequirement(securityRequirement);
+            });
+
 
             var app = builder.Build();
 
@@ -71,8 +103,9 @@ namespace Notepad.API
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthentication();
 
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseStaticFiles(new StaticFileOptions

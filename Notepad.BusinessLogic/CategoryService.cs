@@ -21,10 +21,12 @@ namespace Notepad.BusinessLogic
             _mapper = mapper;
         }
 
-        public Task CreateCategoryAsync(CategoryDTO categoryDTO)
+        public async Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO createCategoryDto, string userId)
         {
-            var category = _mapper.Map<Category>(categoryDTO);
-            return _categoryRepository.AddAsync(category);
+            var category = _mapper.Map<Category>(createCategoryDto);
+            category.UserId = userId;
+            await _categoryRepository.AddAsync(category);
+            return _mapper.Map<CategoryDTO>(category);
         }
 
         public async Task DeleteCategoryAsync(int id)

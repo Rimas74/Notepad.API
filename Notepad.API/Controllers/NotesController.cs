@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Notepad.BusinessLogic;
 using Notepad.Common.DTOs;
@@ -18,6 +19,7 @@ namespace Notepad.API.Controllers
         }
 
         [HttpGet]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes([FromQuery] string? name, [FromQuery] int? categoryId)
         {
 
@@ -26,7 +28,9 @@ namespace Notepad.API.Controllers
 
 
         }
+
         [HttpGet("{id}")]
+        //[Authorize]
         public async Task<ActionResult<NoteDTO>> GetNoteById(int id)
         {
             var note = await _noteService.GetNoteByIdAsync(id);
@@ -36,7 +40,9 @@ namespace Notepad.API.Controllers
             }
             return Ok(note);
         }
+
         [HttpGet("user/{userId}")]
+        //[Authorize]
         public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotesByUserId(string userId)
         {
             var notes = await _noteService.GetNotesByUserIdAsync(userId);
@@ -44,6 +50,7 @@ namespace Notepad.API.Controllers
         }
 
         [HttpPost]
+        //[Authorize]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<NoteDTO>> CreateNote([FromBody] CreateNoteDTO createNoteDto)
         {
@@ -57,13 +64,16 @@ namespace Notepad.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote(int id, [FromBody] NoteUpdateDTO noteUpdateDto)
+        //[Authorize]
+        public async Task<IActionResult> UpdateNote(int noteId, [FromBody] NoteUpdateDTO noteUpdateDto)
         {
-            await _noteService.UpdateNoteAsync(id, noteUpdateDto);
+            await _noteService.UpdateNoteAsync(noteId, noteUpdateDto);
 
             return NoContent();
         }
+
         [HttpDelete("{id}")]
+        //[Authorize]
         public async Task<IActionResult> DeleteNote(int id)
         {
             var note = await _noteService.GetNoteByIdAsync(id);

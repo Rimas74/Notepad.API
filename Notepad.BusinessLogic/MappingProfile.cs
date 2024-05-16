@@ -26,6 +26,7 @@ namespace Notepad.BusinessLogic
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ReverseMap();
+            CreateMap<CreateCategoryDTO, Category>().ReverseMap();
         }
     }
 }

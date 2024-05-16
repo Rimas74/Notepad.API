@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Notepad.BusinessLogic;
 using Notepad.Common.DTOs;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Notepad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         public readonly ICategoryService _categoryService;
@@ -39,13 +43,24 @@ namespace Notepad.API.Controllers
             var categories = await _categoryService.GetCategoriesByUserIdAsync(userId);
             return Ok(categories);
         }
+
         [HttpPost]
-        public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryDTO categoryDTO)
+        [Consumes("application/json")]
+        public async Task<ActionResult<CategoryDTO>> CreateCategoryAsync([FromBody] CreateCategoryDTO createCategoryDTO)
         {
-            await _categoryService.CreateCategoryAsync(categoryDTO);
-            return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = categoryDTO.CategoryId }, categoryDTO);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get the authenticated user's ID
+
+            var createdCategory = await _categoryService.CreateCategoryAsync(createCategoryDTO, userId);
+            if (createdCategory == null)
+            {
+                return BadRequest("Failed to create category");
+            }
+
+            return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = createdCategory.CategoryId }, createdCategory);
         }
+
         [HttpPut("{id}")]
+        //[Authorize]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
         {
             if (id != categoryDTO.CategoryId)
@@ -55,7 +70,9 @@ namespace Notepad.API.Controllers
             await _categoryService.UpdateCategoryAsync(categoryDTO);
             return NoContent();
         }
+
         [HttpDelete("{id}")]
+        //[Authorize]
         public async Task<IActionResult> DeleteCategoryAsync(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);

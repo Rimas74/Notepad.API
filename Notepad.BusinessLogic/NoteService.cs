@@ -63,9 +63,9 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<NoteDTO>(note);
         }
 
-        public async Task UpdateNoteAsync(int id, NoteUpdateDTO noteUpdateDto)
+        public async Task UpdateNoteAsync(int noteId, NoteUpdateDTO noteUpdateDto)
         {
-            var note = await _noteRepository.GetByIdAsync(id);
+            var note = await _noteRepository.GetByIdAsync(noteId);
 
             if (note == null)
             {

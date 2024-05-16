@@ -11,5 +11,6 @@ namespace Notepad.Repositories.Entities
     {
         public ICollection<Note> Notes { get; set; }
         public ICollection<Category> Categories { get; set; }
+
     }
 }

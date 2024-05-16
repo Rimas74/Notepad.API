@@ -15,6 +15,7 @@ namespace Notepad.BusinessLogic
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<FileManager>(provider =>
                 new FileManager(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")));
+            services.AddScoped<ITokenService, TokenService>();
             return services;
         }
     }
