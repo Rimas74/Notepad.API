@@ -26,7 +26,6 @@ namespace Notepad.DataAccess
         .HasForeignKey(n => n.UserId)
         .OnDelete(DeleteBehavior.Restrict);
 
-
             modelBuilder.Entity<Note>()
                 .HasOne(n => n.Category)
                 .WithMany(c => c.Notes)

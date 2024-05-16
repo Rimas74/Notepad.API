@@ -21,7 +21,7 @@ namespace Notepad.BusinessLogic
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string name = "", int? categoryId = null)
+        public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string? name = "", int? categoryId = null)
         {
             var query = _noteRepository.GetAll();
             if (!string.IsNullOrEmpty(name))
@@ -63,11 +63,15 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<NoteDTO>(note);
         }
 
-        public async Task UpdateNoteAsync(NoteUpdateDTO noteUpdateDto)
+        public async Task UpdateNoteAsync(int id, NoteUpdateDTO noteUpdateDto)
         {
-            var note = await _noteRepository.GetByIdAsync(noteUpdateDto.NoteId);
-            _mapper.Map(noteUpdateDto, note);
+            var note = await _noteRepository.GetByIdAsync(id);
 
+            if (note == null)
+            {
+                throw new KeyNotFoundException("Note not found");
+            }
+            _mapper.Map(noteUpdateDto, note);
             if (noteUpdateDto.Image != null)
             {
                 note.ImagePath = await _fileManager.SaveImageAsync(noteUpdateDto.Image);

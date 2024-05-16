@@ -18,7 +18,7 @@ namespace Notepad.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes([FromQuery] string name, [FromQuery] int? categoryId)
+        public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes([FromQuery] string? name, [FromQuery] int? categoryId)
         {
 
             var filteredNotes = await _noteService.GetAllNotesAsync(name, categoryId);
@@ -42,6 +42,7 @@ namespace Notepad.API.Controllers
             var notes = await _noteService.GetNotesByUserIdAsync(userId);
             return Ok(notes);
         }
+
         [HttpPost]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<NoteDTO>> CreateNote([FromBody] CreateNoteDTO createNoteDto)
@@ -58,12 +59,8 @@ namespace Notepad.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNote(int id, [FromBody] NoteUpdateDTO noteUpdateDto)
         {
-            if (id != noteUpdateDto.NoteId)
-            {
-                return BadRequest("Note ID mismatch");
-            }
+            await _noteService.UpdateNoteAsync(id, noteUpdateDto);
 
-            await _noteService.UpdateNoteAsync(noteUpdateDto);
             return NoContent();
         }
         [HttpDelete("{id}")]
