@@ -22,11 +22,16 @@ namespace Notepad.BusinessLogic
 
 
             CreateMap<CategoryDTO, Category>()
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ReverseMap();
-            CreateMap<CreateCategoryDTO, Category>().ReverseMap();
+            CreateMap<CreateCategoryDTO, Category>()
+                .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ReverseMap();
+            CreateMap<UpdateCategoryDTO, Category>()
+                .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ReverseMap();
+
         }
     }
 }

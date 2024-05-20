@@ -48,7 +48,7 @@ namespace Notepad.API.Controllers
         [Consumes("application/json")]
         public async Task<ActionResult<CategoryDTO>> CreateCategoryAsync([FromBody] CreateCategoryDTO createCategoryDTO)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get the authenticated user's ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var createdCategory = await _categoryService.CreateCategoryAsync(createCategoryDTO, userId);
             if (createdCategory == null)
@@ -56,18 +56,19 @@ namespace Notepad.API.Controllers
                 return BadRequest("Failed to create category");
             }
 
-            return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = createdCategory.CategoryId }, createdCategory);
+            return Ok(createdCategory); // return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = createdCategory.CategoryId }, createdCategory);
         }
 
         [HttpPut("{id}")]
         //[Authorize]
-        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryDTO updateCategoryDTO)
         {
-            if (id != categoryDTO.CategoryId)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var updatedCategory = await _categoryService.UpdateCategoryAsync(id, updateCategoryDTO, userId);
+            if (updatedCategory == null)
             {
-                return BadRequest("No category with provided category id.");
+                return BadRequest("Failed to update category");
             }
-            await _categoryService.UpdateCategoryAsync(categoryDTO);
             return NoContent();
         }
 

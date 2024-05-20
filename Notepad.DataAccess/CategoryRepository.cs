@@ -46,6 +46,11 @@ namespace Notepad.DataAccess
             return await _context.Categories.Where(c => c.UserId == userId).ToListAsync();
         }
 
+        public async Task<Category> GetCategoryByNameAndUserIdAsync(string name, string userId)
+        {
+            return await _context.Categories.FirstOrDefaultAsync(c => c.Name == name && c.UserId == userId);
+        }
+
         public async Task UpdateAsync(Category category)
         {
             _context.Categories.Update(category);

@@ -52,7 +52,7 @@ namespace Notepad.API.Controllers
         [HttpPost]
         //[Authorize]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<NoteDTO>> CreateNote([FromBody] CreateNoteDTO createNoteDto)
+        public async Task<ActionResult<NoteDTO>> CreateNote([FromForm] CreateNoteDTO createNoteDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var createdNote = await _noteService.CreateNoteAsync(createNoteDto, userId);
@@ -60,7 +60,7 @@ namespace Notepad.API.Controllers
             {
                 return BadRequest("Failed to create the note.");
             }
-            return CreatedAtAction(nameof(GetNoteById), new { id = createdNote.NoteId }, createdNote);
+            return CreatedAtAction(nameof(GetNoteById), new { id = createdNote.NoteId }, createdNote); //return Ok(createdNote);
         }
 
         [HttpPut("{id}")]

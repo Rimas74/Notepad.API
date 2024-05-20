@@ -16,7 +16,7 @@ namespace Notepad.BusinessLogic
         Task<IEnumerable<CategoryDTO>> GetCategoriesByUserIdAsync(string userId);
         Task<CategoryDTO> GetCategoryByIdAsync(int id);
         Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO createCategoryDto, string userId);
-        Task UpdateCategoryAsync(CategoryDTO categoryDTO);
+        Task<CategoryDTO> UpdateCategoryAsync(int id, UpdateCategoryDTO updateCategoryDTO, string userId);
         Task DeleteCategoryAsync(int id);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using Notepad.Common.DTOs;
 using Notepad.Repositories;
 using Notepad.Repositories.Entities;
@@ -23,6 +24,12 @@ namespace Notepad.BusinessLogic
 
         public async Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO createCategoryDto, string userId)
         {
+            var existingCategory = await _categoryRepository.GetCategoryByNameAndUserIdAsync(createCategoryDto.Name, userId);
+            if (existingCategory != null)
+            {
+                return null;
+            }
+
             var category = _mapper.Map<Category>(createCategoryDto);
             category.UserId = userId;
             await _categoryRepository.AddAsync(category);
@@ -57,11 +64,18 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<CategoryDTO>(category);
         }
 
-        public async Task UpdateCategoryAsync(CategoryDTO categoryDTO)
+        public async Task<CategoryDTO> UpdateCategoryAsync(int id, UpdateCategoryDTO updateCategoryDto, string userId)
         {
-            var category = await _categoryRepository.GetAsyncById(categoryDTO.CategoryId);
-            _mapper.Map(categoryDTO, category);
+            var category = await _categoryRepository.GetAsyncById(id);
+            if (category == null || category.UserId != userId)
+            {
+                return null;
+            }
+
+            category.Name = updateCategoryDto.Name;
             await _categoryRepository.UpdateAsync(category);
+            return _mapper.Map<CategoryDTO>(category);
+
         }
 
     }
