@@ -63,19 +63,14 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<NoteDTO>(note);
         }
 
-        public async Task UpdateNoteAsync(int noteId, NoteUpdateDTO noteUpdateDto)
+        public async Task UpdateNoteDetailsAsync(int noteId, NoteUpdateDTO noteUpdateDto)
         {
             var note = await _noteRepository.GetByIdAsync(noteId);
-
             if (note == null)
             {
                 throw new KeyNotFoundException("Note not found");
             }
             _mapper.Map(noteUpdateDto, note);
-            if (noteUpdateDto.Image != null)
-            {
-                note.ImagePath = await _fileManager.SaveImageAsync(noteUpdateDto.Image);
-            }
             await _noteRepository.UpdateAsync(note);
         }
 
@@ -87,6 +82,22 @@ namespace Notepad.BusinessLogic
                 await _noteRepository.DeleteAsync(note);
             }
 
+        }
+
+
+
+        public async Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto)
+        {
+            var note = await _noteRepository.GetByIdAsync(noteId);
+            if (note == null)
+            {
+                throw new KeyNotFoundException("Note not found");
+            }
+            if (noteUpdateImageDto.Image != null)
+            {
+                note.ImagePath = await _fileManager.SaveImageAsync(noteUpdateImageDto.Image);
+            }
+            await _noteRepository.UpdateAsync(note);
         }
     }
 }

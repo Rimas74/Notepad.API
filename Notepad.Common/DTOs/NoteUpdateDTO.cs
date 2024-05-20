@@ -9,9 +9,6 @@ namespace Notepad.Common.DTOs
         [Required]
         public string Title { get; set; }
 
-        [MaxFileSize(5 * 1024 * 1024)]
-        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
-        public IFormFile Image { get; set; }
         [Required]
         public string Content { get; set; }
         [Required]

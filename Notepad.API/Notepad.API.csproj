@@ -29,4 +29,8 @@
 		<ProjectReference Include="..\Notepad.DataAccess\Notepad.DataAccess.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+
 </Project>

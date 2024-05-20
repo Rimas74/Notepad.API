@@ -57,7 +57,7 @@ namespace Notepad.API
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "images");
             builder.Services.AddSingleton(new FileManager(basePath));
 
             builder.Services.AddEndpointsApiExplorer();

@@ -50,7 +50,7 @@ namespace Notepad.API.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<NoteDTO>> CreateNote([FromForm] CreateNoteDTO createNoteDto)
         {
@@ -63,17 +63,40 @@ namespace Notepad.API.Controllers
             return CreatedAtAction(nameof(GetNoteById), new { id = createdNote.NoteId }, createdNote); //return Ok(createdNote);
         }
 
-        [HttpPut("{id}")]
-        //[Authorize]
-        public async Task<IActionResult> UpdateNote(int noteId, [FromBody] NoteUpdateDTO noteUpdateDto)
+        [HttpPut("{id}/details")]
+        [Authorize]
+        public async Task<IActionResult> UpdateNoteDetails(int id, [FromBody] NoteUpdateDTO noteUpdateDto)
         {
-            await _noteService.UpdateNoteAsync(noteId, noteUpdateDto);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var note = await _noteService.GetNoteByIdAsync(id);
 
+            if (note == null || note.UserId != userId)
+            {
+                return NotFound();
+            }
+
+            await _noteService.UpdateNoteDetailsAsync(id, noteUpdateDto);
             return NoContent();
         }
 
+        [HttpPut("{id}/image")]
+        [Authorize]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateNoteImage(int id, [FromForm] NoteUpdateImageDTO noteUpdateImageDto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var note = await _noteService.GetNoteByIdAsync(id);
+
+            if (note == null || note.UserId != userId)
+            {
+                return NotFound();
+            }
+
+            await _noteService.UpdateNoteImageAsync(id, noteUpdateImageDto);
+            return NoContent();
+        }
         [HttpDelete("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> DeleteNote(int id)
         {
             var note = await _noteService.GetNoteByIdAsync(id);

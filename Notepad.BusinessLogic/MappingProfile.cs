@@ -23,15 +23,19 @@ namespace Notepad.BusinessLogic
 
             CreateMap<CategoryDTO, Category>()
                 .ReverseMap();
+
             CreateMap<CreateCategoryDTO, Category>()
                 .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
                 .ReverseMap();
+
             CreateMap<UpdateCategoryDTO, Category>()
                 .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
                 .ReverseMap();
-
+            CreateMap<NoteUpdateImageDTO, Note>()
+               .ForMember(dest => dest.ImagePath, opt => opt.Ignore())
+               .ReverseMap();
         }
     }
 }
