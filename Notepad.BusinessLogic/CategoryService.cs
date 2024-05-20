@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Notepad.Common.DTOs;
 using Notepad.Repositories;
@@ -15,15 +16,18 @@ namespace Notepad.BusinessLogic
     {
         public readonly ICategoryRepository _categoryRepository;
         public readonly IMapper _mapper;
+        private readonly ILogger<CategoryService> _logger;
 
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, ILogger<CategoryService> logger)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO createCategoryDto, string userId)
         {
+            _logger.LogInformation($"Creating category for userId={userId}");
             var existingCategory = await _categoryRepository.GetCategoryByNameAndUserIdAsync(createCategoryDto.Name, userId);
             if (existingCategory != null)
             {
@@ -60,6 +64,8 @@ namespace Notepad.BusinessLogic
 
         public async Task<CategoryDTO> GetCategoryByIdAsync(int id)
         {
+
+            _logger.LogInformation("Getting category by id={id}", id);
             var category = await _categoryRepository.GetAsyncById(id);
             return _mapper.Map<CategoryDTO>(category);
         }

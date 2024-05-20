@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,12 @@ namespace Notepad.BusinessLogic
         {
             services.AddScoped<INoteService, NoteService>();
             services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<FileManager>(provider =>
-                new FileManager(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")));
+            services.AddScoped<IFileManager>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<FileManager>>();
+                var basePath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+                return new FileManager(basePath, logger);
+            });
             services.AddScoped<ITokenService, TokenService>();
             return services;
         }

@@ -21,6 +21,10 @@ namespace Notepad.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+
             builder.Services.AddDataAccessServices(builder.Configuration);
             builder.Services.AddBusinessLogicServices();
 
@@ -58,7 +62,8 @@ namespace Notepad.API
         };
     });
             var basePath = Path.Combine(Directory.GetCurrentDirectory(), "images");
-            builder.Services.AddSingleton(new FileManager(basePath));
+            builder.Services.AddSingleton<IFileManager>(sp =>
+               new FileManager(basePath, sp.GetRequiredService<ILogger<FileManager>>()));
 
             builder.Services.AddEndpointsApiExplorer();
 

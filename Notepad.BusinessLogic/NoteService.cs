@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Notepad.Common.DTOs;
 using Notepad.Repositories;
 using Notepad.Repositories.Entities;
@@ -13,16 +14,20 @@ namespace Notepad.BusinessLogic
         private readonly INoteRepository _noteRepository;
         private readonly FileManager _fileManager;
         private readonly IMapper _mapper;
+        private readonly ILogger<NoteService> _logger;
 
-        public NoteService(INoteRepository noteRepository, FileManager fileManager, IMapper mapper)
+
+        public NoteService(INoteRepository noteRepository, FileManager fileManager, IMapper mapper, ILogger<NoteService> logger)
         {
             _noteRepository = noteRepository;
             _fileManager = fileManager;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string? name = "", int? categoryId = null)
         {
+            _logger.LogInformation("Getting all notes with filter name={name} and categoryId={categoryId}", name, categoryId);
             var query = _noteRepository.GetAll();
             if (!string.IsNullOrEmpty(name))
             {
@@ -38,18 +43,21 @@ namespace Notepad.BusinessLogic
 
         public async Task<IEnumerable<NoteDTO>> GetNotesByUserIdAsync(string userId)
         {
+            _logger.LogInformation("Getting notes for userId={userId}", userId);
             var notes = await _noteRepository.GetNotesByUserIdAsync(userId);
             return _mapper.Map<IEnumerable<NoteDTO>>(notes);
         }
 
         public async Task<NoteDTO> GetNoteByIdAsync(int id)
         {
+            _logger.LogInformation("Getting note by id={id}", id);
             var note = await _noteRepository.GetByIdAsync(id);
             return _mapper.Map<NoteDTO>(note);
         }
 
         public async Task<NoteDTO> CreateNoteAsync(CreateNoteDTO createNoteDto, string userId)
         {
+            _logger.LogInformation("Creating note for userId={userId}", userId);
             var note = _mapper.Map<Note>(createNoteDto);
             note.UserId = userId;
 
@@ -65,6 +73,7 @@ namespace Notepad.BusinessLogic
 
         public async Task UpdateNoteDetailsAsync(int noteId, NoteUpdateDTO noteUpdateDto)
         {
+            _logger.LogInformation("Updating note id={noteId}", noteId);
             var note = await _noteRepository.GetByIdAsync(noteId);
             if (note == null)
             {
@@ -76,6 +85,7 @@ namespace Notepad.BusinessLogic
 
         public async Task DeleteNoteAsync(int id)
         {
+            _logger.LogInformation("Deleting note id={id}", id);
             var note = await _noteRepository.GetByIdAsync(id);
             if (note != null)
             {
@@ -88,6 +98,7 @@ namespace Notepad.BusinessLogic
 
         public async Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto)
         {
+            _logger.LogInformation("Updating image of note id={noteId}", noteId);
             var note = await _noteRepository.GetByIdAsync(noteId);
             if (note == null)
             {
