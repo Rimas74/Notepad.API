@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Notepad.DataAccess
 {
-    internal class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
         public readonly NotepadContext _context;
 
