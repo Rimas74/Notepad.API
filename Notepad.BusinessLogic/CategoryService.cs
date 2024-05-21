@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Notepad.BusinessLogic
 {
-    internal class CategoryService : ICategoryService
+    public class CategoryService : ICategoryService
     {
         public readonly ICategoryRepository _categoryRepository;
         public readonly IMapper _mapper;
