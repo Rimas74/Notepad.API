@@ -31,26 +31,35 @@ namespace Notepad.BusinessLogic
             var existingCategory = await _categoryRepository.GetCategoryByNameAndUserIdAsync(createCategoryDto.Name, userId);
             if (existingCategory != null)
             {
+                _logger.LogWarning($"Category with name {createCategoryDto.Name} already exists for userId={userId}");
                 return null;
             }
 
             var category = _mapper.Map<Category>(createCategoryDto);
             category.UserId = userId;
             await _categoryRepository.AddAsync(category);
+            _logger.LogInformation($"Category with id={category.CategoryId} created for userId={userId}");
             return _mapper.Map<CategoryDTO>(category);
         }
 
         public async Task DeleteCategoryAsync(int id)
         {
+            _logger.LogInformation($"Deleting category with id={id}");
             var category = await _categoryRepository.GetAsyncById(id);
             if (category != null)
             {
                 await _categoryRepository.DeleteAsync(category);
+                _logger.LogInformation($"Category with id={id} deleted");
+            }
+            else
+            {
+                _logger.LogWarning($"Category with id={id} not found");
             }
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync()
         {
+            _logger.LogInformation("Getting all categories");
             var categories = await _categoryRepository.GetAllAsync();
 
             return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
@@ -58,6 +67,7 @@ namespace Notepad.BusinessLogic
 
         public async Task<IEnumerable<CategoryDTO>> GetCategoriesByUserIdAsync(string userId)
         {
+            _logger.LogInformation($"Getting categories for userId={userId}");
             var categories = await _categoryRepository.GetCategoriesByUserIdAsync(userId);
             return _mapper.Map<IEnumerable<CategoryDTO>>(categories); ;
         }
@@ -65,21 +75,33 @@ namespace Notepad.BusinessLogic
         public async Task<CategoryDTO> GetCategoryByIdAsync(int id)
         {
 
-            _logger.LogInformation("Getting category by id={id}", id);
+            _logger.LogInformation($"Getting category by id={id}");
             var category = await _categoryRepository.GetAsyncById(id);
+            if (category == null)
+            {
+                _logger.LogWarning($"Category with id={id} not found");
+            }
             return _mapper.Map<CategoryDTO>(category);
         }
 
         public async Task<CategoryDTO> UpdateCategoryAsync(int id, UpdateCategoryDTO updateCategoryDto, string userId)
         {
+            _logger.LogInformation($"Updating category with id={id} for userId={userId}");
             var category = await _categoryRepository.GetAsyncById(id);
-            if (category == null || category.UserId != userId)
+            if (category == null)
             {
+                _logger.LogWarning($"Category with id={id} not found");
+                return null;
+            }
+            if (category.UserId != userId)
+            {
+                _logger.LogWarning($"User with userId={userId} does not have permission to update category with id={id}");
                 return null;
             }
 
             category.Name = updateCategoryDto.Name;
             await _categoryRepository.UpdateAsync(category);
+            _logger.LogInformation($"Category with id={id} updated");
             return _mapper.Map<CategoryDTO>(category);
 
         }

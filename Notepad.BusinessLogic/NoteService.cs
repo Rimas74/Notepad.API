@@ -12,12 +12,12 @@ namespace Notepad.BusinessLogic
     public class NoteService : INoteService
     {
         private readonly INoteRepository _noteRepository;
-        private readonly FileManager _fileManager;
+        private readonly IFileManager _fileManager;
         private readonly IMapper _mapper;
         private readonly ILogger<NoteService> _logger;
 
 
-        public NoteService(INoteRepository noteRepository, FileManager fileManager, IMapper mapper, ILogger<NoteService> logger)
+        public NoteService(INoteRepository noteRepository, IFileManager fileManager, IMapper mapper, ILogger<NoteService> logger)
         {
             _noteRepository = noteRepository;
             _fileManager = fileManager;
