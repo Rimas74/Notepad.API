@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notepad.Repositories", "Not
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notepad.Common", "Notepad.Common\Notepad.Common.csproj", "{B0C7952E-DB6B-48D4-A708-500776D46D68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsBusinessLogic", "UnitTestsBusinessLogic\UnitTestsBusinessLogic.csproj", "{13B8AA96-8721-4ED7-83DF-549D72E687A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestsBusinessLogic", "UnitTestsBusinessLogic\UnitTestsBusinessLogic.csproj", "{13B8AA96-8721-4ED7-83DF-549D72E687A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsDataAccess", "UnitTestsDataAccsess\UnitTestsDataAccess.csproj", "{627244CC-28B7-4AA9-917C-016AB2A3DC8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestsDataAccess", "UnitTestsDataAccsess\UnitTestsDataAccess.csproj", "{627244CC-28B7-4AA9-917C-016AB2A3DC8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsControllers", "UnitTestsControllers\UnitTestsControllers.csproj", "{9F95A23E-E52E-41AD-8661-FB0B878DBE32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{627244CC-28B7-4AA9-917C-016AB2A3DC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{627244CC-28B7-4AA9-917C-016AB2A3DC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{627244CC-28B7-4AA9-917C-016AB2A3DC8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F95A23E-E52E-41AD-8661-FB0B878DBE32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F95A23E-E52E-41AD-8661-FB0B878DBE32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F95A23E-E52E-41AD-8661-FB0B878DBE32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F95A23E-E52E-41AD-8661-FB0B878DBE32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
