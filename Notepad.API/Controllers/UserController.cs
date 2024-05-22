@@ -21,6 +21,7 @@ namespace Notepad.API.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
@@ -28,14 +29,15 @@ namespace Notepad.API.Controllers
             if (user != null && await _userManager.CheckPasswordAsync(user, loginDTO.Password))
             {
                 var token = await _tokenService.GenerateToken(user);
-                return Ok(new { token });
+                return Ok(new TokenResponseDTO { Token = token });
             }
             return Unauthorized();
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
-            var user = new User { UserName = registerDTO.Username, Email = registerDTO.Email, };
+            var user = new User { UserName = registerDTO.Username, Email = registerDTO.Email };
             var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (result.Succeeded)
             {
