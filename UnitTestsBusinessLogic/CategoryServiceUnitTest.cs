@@ -13,6 +13,7 @@ namespace UnitTestsBusinessLogic
     public class CategoryServiceUnitTest : IAsyncLifetime
     {
         private CategoryService _categoryService;
+
         private readonly Mock<ICategoryRepository> _categoryRepositoryMock = new Mock<ICategoryRepository>();
         private readonly Mock<IMapper> _mapperMock = new Mock<IMapper>();
         private readonly Mock<ILogger<CategoryService>> _loggerMock = new Mock<ILogger<CategoryService>>();
@@ -56,9 +57,6 @@ namespace UnitTestsBusinessLogic
             _mapperMock.Setup(m => m.Map<CategoryDTO>(It.IsAny<Category>())).Returns((Category category) => category != null ? _categoryDTOs.Find(c => c.CategoryId == category.CategoryId) ?? new CategoryDTO() : null);
 
             _mapperMock.Setup(m => m.Map(It.IsAny<UpdateCategoryDTO>(), It.IsAny<Category>())).Callback<UpdateCategoryDTO, Category>((dto, category) => category.Name = dto.Name);
-
-
-
 
 
 
