@@ -33,9 +33,9 @@ namespace Notepad.DataAccess
         }
 
 
-        public IQueryable<Note> GetAll()
+        public IQueryable<Note> GetAll(string userId)
         {
-            return _context.Notes.AsQueryable();
+            return _context.Notes.Where(n => n.UserId == userId).AsQueryable();
         }
 
 

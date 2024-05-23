@@ -25,10 +25,11 @@ namespace Notepad.BusinessLogic
             _logger = logger;
         }
 
-        public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string? name = "", int? categoryId = null)
+        public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string userId, string? name = "", int? categoryId = null)
         {
-            _logger.LogInformation("Getting all notes with filter name={name} and categoryId={categoryId}", name, categoryId);
-            var query = _noteRepository.GetAll();
+            _logger.LogInformation("Getting all notes with filter name={name} and categoryId={categoryId} for userId={userId}", name, categoryId, userId);
+
+            var query = _noteRepository.GetAll(userId);
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(n => EF.Functions.Like(n.Title, $"%{name}%"));

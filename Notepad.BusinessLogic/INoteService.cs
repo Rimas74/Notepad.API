@@ -12,7 +12,7 @@ namespace Notepad.BusinessLogic
 {
     public interface INoteService
     {
-        Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string name, int? categoryId);
+        Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string userId, string name, int? categoryId);
         Task<IEnumerable<NoteDTO>> GetNotesByUserIdAsync(string userId);
         Task<NoteDTO> GetNoteByIdAsync(int id);
         Task<NoteDTO> CreateNoteAsync(CreateNoteDTO noteDto, string userId);

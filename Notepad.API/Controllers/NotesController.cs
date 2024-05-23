@@ -22,8 +22,8 @@ namespace Notepad.API.Controllers
         //[Authorize]
         public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes([FromQuery] string? name, [FromQuery] int? categoryId)
         {
-
-            var filteredNotes = await _noteService.GetAllNotesAsync(name, categoryId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var filteredNotes = await _noteService.GetAllNotesAsync(userId, name, categoryId);
             return Ok(filteredNotes);
 
 
