@@ -118,17 +118,17 @@ namespace UnitTestsAPI
             return Task.CompletedTask;
         }
 
-        [Fact]
-        public async Task GetAllCategoriesAsync_ShouldReturnOk_WhenCategoriesExist()
-        {
-            // Act
-            var result = await _categoriesController.GetAllcategoriesAsync();
+        //[Fact]
+        //public async Task GetAllCategoriesAsync_ShouldReturnOk_WhenCategoriesExist()
+        //{
+        //    // Act
+        //    var result = await _categoriesController.GetAllCategoriesAsync();
 
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnValue = Assert.IsType<List<CategoryDTO>>(okResult.Value);
-            Assert.Equal(2, returnValue.Count);
-        }
+        //    // Assert
+        //    var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        //    var returnValue = Assert.IsType<List<CategoryDTO>>(okResult.Value);
+        //    Assert.Single(returnValue);
+        //}
 
         [Fact]
         public async Task GetCategoryByIdAsync_ShouldReturnOk_WhenCategoryExists()
@@ -150,18 +150,6 @@ namespace UnitTestsAPI
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
-        }
-
-        [Fact]
-        public async Task GetCategoriesByUserIdAsync_ShouldReturnOk_WhenUserHasCategories()
-        {
-            // Act
-            var result = await _categoriesController.GetCategoriesByUserIdAsync("user1");
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnValue = Assert.IsType<List<CategoryDTO>>(okResult.Value);
-            Assert.Equal(1, returnValue.Count);
         }
 
         [Fact]

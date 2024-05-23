@@ -1,8 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Notepad.DataAccess;
+using Notepad.Repositories;
 using Notepad.Repositories.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
-namespace UnitTestsDataAccsess
+namespace UnitTestsDataAccess
 {
     public class CategoryRepositoryUnitTests : IAsyncLifetime
     {
@@ -22,11 +27,10 @@ namespace UnitTestsDataAccsess
         }
 
         private async Task<NotepadContext> GetDatabaseContext()
-
         {
             var options = new DbContextOptionsBuilder<NotepadContext>()
-                    .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
-                    .Options;
+                .UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
+                .Options;
             var context = new NotepadContext(options);
             context.Database.EnsureCreated();
 
@@ -39,26 +43,22 @@ namespace UnitTestsDataAccsess
                 await context.SaveChangesAsync();
             }
             return context;
-
         }
 
         [Fact]
         public async Task AddAsync_ShouldAddCategory()
         {
-
             var category = new Category { Name = "NewCategory", UserId = "user3" };
 
             await _repository.AddAsync(category);
             var categories = await _context.Categories.ToListAsync();
 
             Assert.Contains(category, categories);
-
         }
 
         [Fact]
         public async Task DeleteAsync_ShouldRemoveCategory()
         {
-
             var category = await _context.Categories.FirstAsync();
 
             await _repository.DeleteAsync(category);
@@ -68,46 +68,50 @@ namespace UnitTestsDataAccsess
         }
 
         [Fact]
-        public async Task GetAllAsync_ShouldReturnAllCategories()
+        public async Task GetAllAsync_ShouldReturnAllCategoriesForUser()
         {
+            var userId = "user1";
+            var categories = await _repository.GetAllAsync(userId);
 
-            var categories = await _repository.GetAllAsync();
-
-            Assert.Equal(2, categories.Count());
+            Assert.Single(categories);
+            Assert.All(categories, c => Assert.Equal(userId, c.UserId));
         }
 
         [Fact]
-        public async Task GetAsyncById_ShouldReturnCategoryById()
+        public async Task GetAsyncById_ShouldReturnCategoryByIdAndUserId()
         {
-
-            var category = await _repository.GetAsyncById(1);
+            var userId = "user1";
+            var category = await _repository.GetAsyncById(1, userId);
 
             Assert.NotNull(category);
-
             Assert.Equal(1, category.CategoryId);
+            Assert.Equal(userId, category.UserId);
         }
 
         [Fact]
         public async Task GetCategoriesByUserIdAsync_ShouldReturnCategoriesByUserId()
         {
-            var categories = await _repository.GetCategoriesByUserIdAsync("user1");
+            var userId = "user1";
+            var categories = await _repository.GetCategoriesByUserIdAsync(userId);
 
             Assert.Single(categories);
+            Assert.All(categories, c => Assert.Equal(userId, c.UserId));
         }
 
         [Fact]
-        public async Task GetCategoryByNameAndUserIdAsync_ShouldReturnCategoriesByNameUserId()
+        public async Task GetCategoryByNameAndUserIdAsync_ShouldReturnCategoriesByNameAndUserId()
         {
+            var userId = "user1";
+            var category = await _repository.GetCategoryByNameAndUserIdAsync("Category1", userId);
 
-            var category = await _repository.GetCategoryByNameAndUserIdAsync("Category1", "user1");
             Assert.NotNull(category);
             Assert.Equal("Category1", category.Name);
+            Assert.Equal(userId, category.UserId);
         }
 
         [Fact]
         public async Task UpdateAsync_ShouldUpdateCategory()
         {
-
             var category = await _context.Categories.FirstAsync();
             category.Name = "UpdatedCategory";
 
@@ -115,7 +119,6 @@ namespace UnitTestsDataAccsess
             var updatedCategory = await _context.Categories.FindAsync(category.CategoryId);
 
             Assert.Equal("UpdatedCategory", updatedCategory.Name);
-
         }
     }
 }

@@ -42,10 +42,10 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<CategoryDTO>(category);
         }
 
-        public async Task DeleteCategoryAsync(int id)
+        public async Task DeleteCategoryAsync(int id, string userId)
         {
             _logger.LogInformation($"Deleting category with id={id}");
-            var category = await _categoryRepository.GetAsyncById(id);
+            var category = await _categoryRepository.GetAsyncById(id, userId);
             if (category != null)
             {
                 await _categoryRepository.DeleteAsync(category);
@@ -57,10 +57,10 @@ namespace Notepad.BusinessLogic
             }
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync(string userId)
         {
             _logger.LogInformation("Getting all categories");
-            var categories = await _categoryRepository.GetAllAsync();
+            var categories = await _categoryRepository.GetAllAsync(userId);
 
             return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
         }
@@ -72,11 +72,11 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<IEnumerable<CategoryDTO>>(categories); ;
         }
 
-        public async Task<CategoryDTO> GetCategoryByIdAsync(int id)
+        public async Task<CategoryDTO> GetCategoryByIdAsync(int id, string userId)
         {
 
             _logger.LogInformation($"Getting category by id={id}");
-            var category = await _categoryRepository.GetAsyncById(id);
+            var category = await _categoryRepository.GetAsyncById(id, userId);
             if (category == null)
             {
                 _logger.LogWarning($"Category with id={id} not found");
@@ -87,7 +87,7 @@ namespace Notepad.BusinessLogic
         public async Task<CategoryDTO> UpdateCategoryAsync(int id, UpdateCategoryDTO updateCategoryDto, string userId)
         {
             _logger.LogInformation($"Updating category with id={id} for userId={userId}");
-            var category = await _categoryRepository.GetAsyncById(id);
+            var category = await _categoryRepository.GetAsyncById(id, userId);
             if (category == null)
             {
                 _logger.LogWarning($"Category with id={id} not found");

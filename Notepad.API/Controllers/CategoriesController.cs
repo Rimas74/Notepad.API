@@ -23,26 +23,31 @@ namespace Notepad.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetAllcategoriesAsync()
         {
-            var categories = await _categoryService.GetAllCategoriesAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var categories = await _categoryService.GetAllCategoriesAsync(userId);
             return Ok(categories);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDTO>> GetCategoryByIdAsync(int id)
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var category = await _categoryService.GetCategoryByIdAsync(id, userId);
             if (category == null)
             {
                 return NotFound();
             }
             return Ok(category);
         }
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesByUserIdAsync(string userId)
-        {
-            var categories = await _categoryService.GetCategoriesByUserIdAsync(userId);
-            return Ok(categories);
-        }
+
+
+        //[HttpGet("user/{userId}")]
+        //public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesByUserIdAsync(string userId)
+        //{
+        //    var Id = HttpContext.User.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        //    var categories = await _categoryService.GetCategoriesByUserIdAsync(userId);
+        //    return Ok(categories);
+        //}
 
         [HttpPost]
         [Consumes("application/json")]
@@ -76,12 +81,13 @@ namespace Notepad.API.Controllers
         //[Authorize]
         public async Task<IActionResult> DeleteCategoryAsync(int id)
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var category = await _categoryService.GetCategoryByIdAsync(id, userId);
             if (category == null)
             {
                 return NotFound();
             }
-            await _categoryService.DeleteCategoryAsync(id);
+            await _categoryService.DeleteCategoryAsync(id, userId);
             return NoContent();
         }
     }

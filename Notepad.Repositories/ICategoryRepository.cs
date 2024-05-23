@@ -9,8 +9,8 @@ namespace Notepad.Repositories
 {
     public interface ICategoryRepository
     {
-        Task<Category> GetAsyncById(int id);
-        Task<IEnumerable<Category>> GetAllAsync();
+        Task<Category> GetAsyncById(int id, string userId);
+        Task<IEnumerable<Category>> GetAllAsync(string userId);
         Task<IEnumerable<Category>> GetCategoriesByUserIdAsync(string userId);
         Task AddAsync(Category category);
         Task UpdateAsync(Category category);

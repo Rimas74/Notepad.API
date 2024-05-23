@@ -31,14 +31,14 @@ namespace Notepad.DataAccess
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<IEnumerable<Category>> GetAllAsync(string userId)
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.Where(c => c.UserId == userId).ToListAsync();
         }
 
-        public async Task<Category> GetAsyncById(int id)
+        public async Task<Category> GetAsyncById(int id, string userId)
         {
-            return await _context.Categories.FindAsync(id);
+            return await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id && c.UserId == userId);
         }
 
         public async Task<IEnumerable<Category>> GetCategoriesByUserIdAsync(string userId)

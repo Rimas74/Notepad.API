@@ -7,7 +7,6 @@ using Notepad.Common.DTOs;
 using Notepad.DataAccess;
 using Notepad.Repositories;
 using Notepad.Repositories.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -96,54 +95,61 @@ namespace UnitTestsBusinessLogic
         }
 
         [Fact]
-        public async Task GetAllCategoriesAsync_ShouldReturnAllCategories()
+        public async Task GetAllCategoriesAsync_ShouldReturnAllCategoriesForUser()
         {
-            //Act
-            var result = await _categoryService.GetAllCategoriesAsync();
+            // Arrange
+            var userId = "user1";
+            var expectedCategories = _categoryDTOs.Where(c => c.UserId == userId);
 
-            //Assert
+            // Act
+            var result = await _categoryService.GetAllCategoriesAsync(userId);
+
+            // Assert
             Assert.NotNull(result);
-            Assert.Equal(_categoryDTOs.Count, result.Count());
-            Assert.Equal(_categoryDTOs.Select(c => c.Name), result.Select(c => c.Name));
+            Assert.Equal(expectedCategories.Count(), result.Count());
+            Assert.All(result, c => Assert.Equal(userId, c.UserId));
         }
 
         [Fact]
         public async Task GetCategoryByIdAsync_ShouldReturnCategory_WhenCategoryExists()
         {
-            //Arrange
+            // Arrange
             var categoryId = 1;
+            var userId = "user1";
 
-            //Act
-            var result = await _categoryService.GetCategoryByIdAsync(categoryId);
+            // Act
+            var result = await _categoryService.GetCategoryByIdAsync(categoryId, userId);
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
             Assert.Equal(categoryId, result.CategoryId);
+            Assert.Equal(userId, result.UserId);
         }
 
         [Fact]
         public async Task GetCategoryByIdAsync_ShouldReturnNull_WhenCategoryDoesNotExist()
         {
-            //Arrange
+            // Arrange
             var categoryId = 3;
+            var userId = "user1";
 
-            //Act
-            var result = await _categoryService.GetCategoryByIdAsync(categoryId);
+            // Act
+            var result = await _categoryService.GetCategoryByIdAsync(categoryId, userId);
 
-            //Assert
+            // Assert
             Assert.Null(result);
         }
 
         [Fact]
         public async Task CreateCategoryAsync_ShouldCreateCategory_WhenCategoryDoesNotExist()
         {
-            //Arrange
+            // Arrange
             var userId = "user3";
 
-            //Act
+            // Act
             var result = await _categoryService.CreateCategoryAsync(_createCategoryDTO, userId);
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
             Assert.Equal(_createCategoryDTO.Name, result.Name);
             Assert.Equal(userId, result.UserId);
@@ -152,13 +158,14 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task UpdateCategoryAsync_ShouldUpdateCategory_WhenCategoryExists()
         {
-            //Arrange
+            // Arrange
             var categoryId = 1;
+            var userId = "user1";
 
-            //Act
-            await _categoryService.UpdateCategoryAsync(categoryId, _updateCategoryDTO, "user1");
+            // Act
+            await _categoryService.UpdateCategoryAsync(categoryId, _updateCategoryDTO, userId);
 
-            //Assert
+            // Assert
             var updatedCategory = await _context.Categories.FindAsync(categoryId);
             Assert.Equal(_updateCategoryDTO.Name, updatedCategory.Name);
         }
@@ -166,13 +173,14 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task DeleteCategoryAsync_ShouldDeleteCategory_WhenCategoryExists()
         {
-            //Arrange
+            // Arrange
             var categoryId = 1;
+            var userId = "user1";
 
-            //Act
-            await _categoryService.DeleteCategoryAsync(categoryId);
+            // Act
+            await _categoryService.DeleteCategoryAsync(categoryId, userId);
 
-            //Assert
+            // Assert
             var deletedCategory = await _context.Categories.FindAsync(categoryId);
             Assert.Null(deletedCategory);
         }
@@ -180,17 +188,17 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task GetCategoriesByUserIdAsync_ShouldReturnCategories_WhenUserHasCategories()
         {
-            //Arrange
+            // Arrange
             var userId = "user1";
-            var categoryDTOs = _categoryDTOs.FindAll(c => c.UserId == userId);
+            var expectedCategories = _categoryDTOs.Where(c => c.UserId == userId);
 
-            //Act
+            // Act
             var result = await _categoryService.GetCategoriesByUserIdAsync(userId);
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
-            Assert.Equal(categoryDTOs.Count, result.Count());
-            Assert.Equal(categoryDTOs.Select(c => c.Name), result.Select(c => c.Name));
+            Assert.Equal(expectedCategories.Count(), result.Count());
+            Assert.All(result, c => Assert.Equal(userId, c.UserId));
         }
     }
 }
