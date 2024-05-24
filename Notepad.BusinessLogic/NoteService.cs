@@ -27,7 +27,7 @@ namespace Notepad.BusinessLogic
 
         public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string userId, string? name = "", int? categoryId = null)
         {
-            _logger.LogInformation("Getting all notes with filter name={name} and categoryId={categoryId} for userId={userId}", name, categoryId, userId);
+            _logger.LogInformation($"Getting all notes with filter name={name} and categoryId={categoryId} for userId={userId}");
 
             var query = _noteRepository.GetAll(userId);
             if (!string.IsNullOrEmpty(name))
@@ -49,10 +49,10 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<IEnumerable<NoteDTO>>(notes);
         }
 
-        public async Task<NoteDTO> GetNoteByIdAsync(int id)
+        public async Task<NoteDTO> GetNoteByIdAsync(int id, string userId)
         {
-            _logger.LogInformation("Getting note by id={id}", id);
-            var note = await _noteRepository.GetByIdAsync(id);
+            _logger.LogInformation($"Getting note by id={id}", id);
+            var note = await _noteRepository.GetByIdAsync(id, userId);
             return _mapper.Map<NoteDTO>(note);
         }
 
@@ -72,10 +72,10 @@ namespace Notepad.BusinessLogic
             return _mapper.Map<NoteDTO>(note);
         }
 
-        public async Task UpdateNoteDetailsAsync(int noteId, NoteUpdateDTO noteUpdateDto)
+        public async Task UpdateNoteDetailsAsync(int noteId, NoteUpdateDTO noteUpdateDto, string userId)
         {
-            _logger.LogInformation("Updating note id={noteId}", noteId);
-            var note = await _noteRepository.GetByIdAsync(noteId);
+            _logger.LogInformation($"Updating note id={noteId}");
+            var note = await _noteRepository.GetByIdAsync(noteId, userId);
             if (note == null)
             {
                 throw new KeyNotFoundException("Note not found");
@@ -84,10 +84,10 @@ namespace Notepad.BusinessLogic
             await _noteRepository.UpdateAsync(note);
         }
 
-        public async Task DeleteNoteAsync(int id)
+        public async Task DeleteNoteAsync(int id, string userId)
         {
-            _logger.LogInformation("Deleting note id={id}", id);
-            var note = await _noteRepository.GetByIdAsync(id);
+            _logger.LogInformation($"Deleting note id={id} for userId={userId}");
+            var note = await _noteRepository.GetByIdAsync(id, userId);
             if (note != null)
             {
                 await _noteRepository.DeleteAsync(note);
@@ -97,10 +97,10 @@ namespace Notepad.BusinessLogic
 
 
 
-        public async Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto)
+        public async Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto, string userId)
         {
             _logger.LogInformation("Updating image of note id={noteId}", noteId);
-            var note = await _noteRepository.GetByIdAsync(noteId);
+            var note = await _noteRepository.GetByIdAsync(noteId, userId);
             if (note == null)
             {
                 throw new KeyNotFoundException("Note not found");

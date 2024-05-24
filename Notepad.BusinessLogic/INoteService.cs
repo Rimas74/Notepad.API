@@ -14,11 +14,11 @@ namespace Notepad.BusinessLogic
     {
         Task<IEnumerable<NoteDTO>> GetAllNotesAsync(string userId, string name, int? categoryId);
         Task<IEnumerable<NoteDTO>> GetNotesByUserIdAsync(string userId);
-        Task<NoteDTO> GetNoteByIdAsync(int id);
+        Task<NoteDTO> GetNoteByIdAsync(int id, string userId);
         Task<NoteDTO> CreateNoteAsync(CreateNoteDTO noteDto, string userId);
 
-        Task UpdateNoteDetailsAsync(int noteId, NoteUpdateDTO noteUpdateDto);
-        Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto);
-        Task DeleteNoteAsync(int id);
+        Task UpdateNoteDetailsAsync(int noteId, NoteUpdateDTO noteUpdateDto, string userId);
+        Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto, string userId);
+        Task DeleteNoteAsync(int id, string userId);
     }
 }

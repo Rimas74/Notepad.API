@@ -33,7 +33,8 @@ namespace Notepad.API.Controllers
         //[Authorize]
         public async Task<ActionResult<NoteDTO>> GetNoteById(int id)
         {
-            var note = await _noteService.GetNoteByIdAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var note = await _noteService.GetNoteByIdAsync(id, userId);
             if (note == null)
             {
                 return NotFound();
@@ -41,13 +42,14 @@ namespace Notepad.API.Controllers
             return Ok(note);
         }
 
-        [HttpGet("user/{userId}")]
-        //[Authorize]
-        public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotesByUserId(string userId)
-        {
-            var notes = await _noteService.GetNotesByUserIdAsync(userId);
-            return Ok(notes);
-        }
+        //[HttpGet("user/{userId}")]
+        ////[Authorize]
+        //public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotesByUserId()
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var notes = await _noteService.GetNotesByUserIdAsync(userId);
+        //    return Ok(notes);
+        //}
 
         [HttpPost]
         [Authorize]
@@ -68,14 +70,14 @@ namespace Notepad.API.Controllers
         public async Task<IActionResult> UpdateNoteDetails(int id, [FromBody] NoteUpdateDTO noteUpdateDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var note = await _noteService.GetNoteByIdAsync(id);
+            var note = await _noteService.GetNoteByIdAsync(id, userId);
 
             if (note == null || note.UserId != userId)
             {
                 return NotFound();
             }
 
-            await _noteService.UpdateNoteDetailsAsync(id, noteUpdateDto);
+            await _noteService.UpdateNoteDetailsAsync(id, noteUpdateDto, userId);
             return NoContent();
         }
 
@@ -85,26 +87,27 @@ namespace Notepad.API.Controllers
         public async Task<IActionResult> UpdateNoteImage(int id, [FromForm] NoteUpdateImageDTO noteUpdateImageDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var note = await _noteService.GetNoteByIdAsync(id);
+            var note = await _noteService.GetNoteByIdAsync(id, userId);
 
             if (note == null || note.UserId != userId)
             {
                 return NotFound();
             }
 
-            await _noteService.UpdateNoteImageAsync(id, noteUpdateImageDto);
+            await _noteService.UpdateNoteImageAsync(id, noteUpdateImageDto, userId);
             return NoContent();
         }
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteNote(int id)
         {
-            var note = await _noteService.GetNoteByIdAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var note = await _noteService.GetNoteByIdAsync(id, userId);
             if (note == null)
             {
                 return NotFound();
             }
-            await _noteService.DeleteNoteAsync(id);
+            await _noteService.DeleteNoteAsync(id, userId);
             return NoContent();
         }
 

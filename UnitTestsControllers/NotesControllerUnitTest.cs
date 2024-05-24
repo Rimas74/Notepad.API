@@ -9,12 +9,11 @@ using Notepad.BusinessLogic;
 using Notepad.Common.DTOs;
 using Notepad.DataAccess;
 using Notepad.Repositories.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace UnitTestsControllers
 {
@@ -32,14 +31,15 @@ namespace UnitTestsControllers
         private CreateNoteDTO _createNoteDTO;
         private NoteUpdateDTO _noteUpdateDTO;
         private NoteUpdateImageDTO _noteUpdateImageDTO;
+
         public async Task InitializeAsync()
         {
             _context = await GetDatabaseContext();
 
             _noteDTOs = new List<NoteDTO> {
-        new NoteDTO { NoteId = 1, Title = "Note1", Content = "Content1", CategoryId = 1, UserId = "user1" },
-        new NoteDTO { NoteId = 2, Title = "Note2", Content = "Content2", CategoryId = 2, UserId = "user2" }
-    };
+                new NoteDTO { NoteId = 1, Title = "Note1", Content = "Content1", CategoryId = 1, UserId = "user1" },
+                new NoteDTO { NoteId = 2, Title = "Note2", Content = "Content2", CategoryId = 2, UserId = "user2" }
+            };
 
             _createNoteDTO = new CreateNoteDTO
             {
@@ -91,13 +91,12 @@ namespace UnitTestsControllers
                     {
                         User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                         {
-                    new Claim(ClaimTypes.NameIdentifier, "user1")
+                            new Claim(ClaimTypes.NameIdentifier, "user1")
                         }, "mock"))
                     }
                 }
             };
         }
-
 
         private async Task<NotepadContext> GetDatabaseContext()
         {
@@ -135,7 +134,8 @@ namespace UnitTestsControllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsAssignableFrom<IEnumerable<NoteDTO>>(okResult.Value).ToList();
-            Assert.Equal(_noteDTOs.Count, returnValue.Count);
+            Assert.Single(returnValue);
+            Assert.Equal("user1", returnValue[0].UserId);
         }
 
         [Fact]
@@ -164,21 +164,6 @@ namespace UnitTestsControllers
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
-        }
-
-        [Fact]
-        public async Task GetNotesByUserId_ShouldReturnOk_WhenNotesExist()
-        {
-            // Arrange
-            var userId = "user1";
-
-            // Act
-            var result = await _notesController.GetNotesByUserId(userId);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var returnValue = Assert.IsAssignableFrom<IEnumerable<NoteDTO>>(okResult.Value).ToList();
-            Assert.Equal(_noteDTOs.Count(n => n.UserId == userId), returnValue.Count);
         }
 
         [Fact]

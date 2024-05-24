@@ -9,7 +9,7 @@ namespace Notepad.Repositories
 {
     public interface INoteRepository
     {
-        Task<Note> GetByIdAsync(int id);
+        Task<Note> GetByIdAsync(int id, string userId);
         IQueryable<Note> GetAll(string userId);
         Task<IEnumerable<Note>> GetNotesByUserIdAsync(string userId);
         Task AddAsync(Note note);

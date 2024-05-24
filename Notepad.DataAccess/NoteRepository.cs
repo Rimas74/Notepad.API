@@ -41,7 +41,7 @@ namespace Notepad.DataAccess
 
 
 
-        public async Task<Note> GetByIdAsync(int id) => await _context.Notes.FindAsync(id);
+        public async Task<Note> GetByIdAsync(int id, string userId) => await _context.Notes.FirstOrDefaultAsync(n => n.NoteId == id && n.UserId == userId);
 
 
 

@@ -1,22 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Notepad.DataAccess;
 using Notepad.Repositories.Entities;
-using Microsoft.EntityFrameworkCore;
-using Notepad.Repositories;
-using Notepad.Repositories.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Query;
+using Xunit;
 
 namespace UnitTestsDataAccess
 {
-
-
     public class NoteRepositoryTests : IAsyncLifetime
-
     {
         private NotepadContext _context;
         private NoteRepository _repository;
@@ -32,6 +23,7 @@ namespace UnitTestsDataAccess
             _context = await GetDatabaseContext();
             _repository = new NoteRepository(_context);
         }
+
         private async Task<NotepadContext> GetDatabaseContext()
         {
             var options = new DbContextOptionsBuilder<NotepadContext>()
@@ -39,7 +31,6 @@ namespace UnitTestsDataAccess
                 .Options;
             var context = new NotepadContext(options);
             context.Database.EnsureCreated();
-
 
             if (!context.Notes.Any())
             {
@@ -60,7 +51,6 @@ namespace UnitTestsDataAccess
             var notes = await _context.Notes.ToListAsync();
 
             Assert.Contains(note, notes);
-
         }
 
         [Fact]
@@ -77,21 +67,22 @@ namespace UnitTestsDataAccess
         [Fact]
         public async Task GetAll_ShouldReturnAllNotes()
         {
-            var notes = _context.Notes.ToList();
-            Assert.Equal(2, notes.Count);
+            var notes = await _repository.GetAll("user1").ToListAsync();
+
+            Assert.Single(notes); // Only notes for user1
         }
 
         [Fact]
         public async Task GetByIdAsync_ShouldReturnNoteById()
         {
-            var note = await _repository.GetByIdAsync(1);
+            var note = await _repository.GetByIdAsync(1, "user1");
 
             Assert.NotNull(note);
             Assert.Equal(1, note.NoteId);
         }
 
         [Fact]
-        public async Task GetNotesByUserIdAsyn_ShouldReturnNotesByUserId()
+        public async Task GetNotesByUserIdAsync_ShouldReturnNotesByUserId()
         {
             var notes = await _repository.GetNotesByUserIdAsync("user1");
 
@@ -108,10 +99,6 @@ namespace UnitTestsDataAccess
             var updatedNote = await _context.Notes.FindAsync(note.NoteId);
 
             Assert.Equal("UpdatedNote", updatedNote.Title);
-
-
         }
-
-
     }
 }
