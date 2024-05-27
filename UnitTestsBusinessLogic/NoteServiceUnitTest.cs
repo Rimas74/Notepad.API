@@ -34,8 +34,8 @@ namespace UnitTestsBusinessLogic
             _context = await GetDatabaseContext();
 
             _noteDTOs = new List<NoteDTO> {
-                new NoteDTO { NoteId = 1, Title = "Note1", Content = "Content1", CategoryId = 1, UserId = "user1" },
-                new NoteDTO { NoteId = 2, Title = "Note2", Content = "Content2", CategoryId = 2, UserId = "user2" }
+                new NoteDTO { NoteId = 1, Title = "Note1", Content = "Content1", ImagePath = "path1.jpg", CategoryId = 1, UserId = "user1" },
+                new NoteDTO { NoteId = 2, Title = "Note2", Content = "Content2", ImagePath = "path2.jpg", CategoryId = 2, UserId = "user2" }
             };
 
             _noteUpdateDTO = new NoteUpdateDTO
@@ -60,13 +60,31 @@ namespace UnitTestsBusinessLogic
 
             var noteRepositoryMock = new NoteRepository(_context);
 
-            _mapperMock.Setup(m => m.Map<IEnumerable<NoteDTO>>(It.IsAny<IEnumerable<Note>>())).Returns((IEnumerable<Note> source) =>
-            {
-                return source.Select(s => new NoteDTO { NoteId = s.NoteId, Title = s.Title, Content = s.Content, UserId = s.UserId, CategoryId = s.CategoryId });
-            });
+            _mapperMock.Setup(m => m.Map<IEnumerable<NoteDTO>>(It.IsAny<IEnumerable<Note>>()))
+                .Returns((IEnumerable<Note> source) =>
+                {
+                    return source.Select(s => new NoteDTO
+                    {
+                        NoteId = s.NoteId,
+                        Title = s.Title,
+                        Content = s.Content,
+                        ImagePath = s.ImagePath, // Ensure image path is mapped
+                        UserId = s.UserId,
+                        CategoryId = s.CategoryId
+                    });
+                });
 
-            _mapperMock.Setup(m => m.Map<NoteDTO>(It.IsAny<Note>())).Returns((Note note) =>
-                note != null ? new NoteDTO { NoteId = note.NoteId, Title = note.Title, Content = note.Content, UserId = note.UserId, CategoryId = note.CategoryId } : null);
+            _mapperMock.Setup(m => m.Map<NoteDTO>(It.IsAny<Note>()))
+                .Returns((Note note) =>
+                    note != null ? new NoteDTO
+                    {
+                        NoteId = note.NoteId,
+                        Title = note.Title,
+                        Content = note.Content,
+                        ImagePath = note.ImagePath, // Ensure image path is mapped
+                        UserId = note.UserId,
+                        CategoryId = note.CategoryId
+                    } : null);
 
             _mapperMock.Setup(m => m.Map<Note>(It.IsAny<CreateNoteDTO>())).Returns((CreateNoteDTO dto) =>
                 new Note { Title = dto.Title, Content = dto.Content, CategoryId = dto.CategoryId, UserId = "user3", ImagePath = "default/path.jpg" });
@@ -114,68 +132,71 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task GetAllNotesAsync_ShouldReturnAllNotes()
         {
-            //Act
+            // Act
             var result = await _noteService.GetAllNotesAsync("user1");
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal(_noteDTOs[0].Title, result.First().Title);
+            Assert.Equal(_noteDTOs[0].ImagePath, result.First().ImagePath); // Ensure ImagePath is checked
         }
 
         [Fact]
         public async Task GetNotesByUserIdAsync_ShouldReturnNotes_WhenUserHasNotes()
         {
-            //Arrange
+            // Arrange
             var userId = "user1";
             var notesDTOs = _noteDTOs.FindAll(n => n.UserId == userId);
 
-            //Act
+            // Act
             var result = await _noteService.GetNotesByUserIdAsync(userId);
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
             Assert.Equal(notesDTOs.Count, result.Count());
             Assert.Equal(notesDTOs.Select(n => n.Title), result.Select(n => n.Title));
+            Assert.Equal(notesDTOs.Select(n => n.ImagePath), result.Select(n => n.ImagePath)); // Ensure ImagePath is checked
         }
 
         [Fact]
         public async Task GetNoteByIdAsync_ShouldReturnNote_WhenNoteExists()
         {
-            //Arrange
+            // Arrange
             var noteId = 1;
 
-            //Act
+            // Act
             var result = await _noteService.GetNoteByIdAsync(noteId, "user1");
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
             Assert.Equal(noteId, result.NoteId);
+            Assert.Equal("path1.jpg", result.ImagePath); // Ensure ImagePath is checked
         }
 
         [Fact]
-        public async Task GetNoteByIdAsync_ShouldReturnNull_WhenNoteDoesNotExists()
+        public async Task GetNoteByIdAsync_ShouldReturnNull_WhenNoteDoesNotExist()
         {
-            //Arrange
+            // Arrange
             var noteId = 3;
 
-            //Act
+            // Act
             var result = await _noteService.GetNoteByIdAsync(noteId, "user1");
 
-            //Assert
+            // Assert
             Assert.Null(result);
         }
 
         [Fact]
         public async Task CreateNoteAsync_ShouldCreateNote()
         {
-            //Arrange
+            // Arrange
             var userId = "user3";
 
-            //Act
+            // Act
             var result = await _noteService.CreateNoteAsync(_createNoteDTO, userId);
 
-            //Assert
+            // Assert
             Assert.NotNull(result);
             Assert.Equal(_createNoteDTO.Title, result.Title);
             Assert.Equal(userId, result.UserId);
@@ -184,13 +205,13 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task UpdateNoteDetailsAsync_ShouldUpdateNote_WhenNoteExists()
         {
-            //Arrange
+            // Arrange
             var noteId = 1;
 
-            //Act
+            // Act
             await _noteService.UpdateNoteDetailsAsync(noteId, _noteUpdateDTO, "user1");
 
-            //Assert
+            // Assert
             var updatedNote = await _context.Notes.FindAsync(noteId);
             Assert.Equal(_noteUpdateDTO.Title, updatedNote.Title);
             Assert.Equal(_noteUpdateDTO.Content, updatedNote.Content);
@@ -199,15 +220,15 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task UpdateNoteImageAsync_ShouldUpdateNote_WhenNoteExists()
         {
-            //Arrange
+            // Arrange
             var noteId = 1;
             var note = await _context.Notes.FindAsync(noteId);
             var existingImagePath = note.ImagePath;
 
-            //Act
+            // Act
             await _noteService.UpdateNoteImageAsync(noteId, _noteUpdateImageDTO, "user1");
 
-            //Assert
+            // Assert
             var updatedNote = await _context.Notes.FindAsync(noteId);
             Assert.Equal("path/to/image.jpg", updatedNote.ImagePath);
             _fileManagerMock.Verify(fm => fm.DeleteImageAsync(existingImagePath), Times.Once);
@@ -217,13 +238,13 @@ namespace UnitTestsBusinessLogic
         [Fact]
         public async Task DeleteNoteAsync_ShouldDeleteNote_WhenNoteExists()
         {
-            //Arrange
+            // Arrange
             var noteId = 1;
 
-            //Act
+            // Act
             await _noteService.DeleteNoteAsync(noteId, "user1");
 
-            //Assert
+            // Assert
             var deletedNote = await _context.Notes.FindAsync(noteId);
             Assert.Null(deletedNote);
         }

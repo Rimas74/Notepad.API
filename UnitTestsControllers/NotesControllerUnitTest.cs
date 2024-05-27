@@ -10,6 +10,7 @@ using Notepad.Common.DTOs;
 using Notepad.DataAccess;
 using Notepad.Repositories.Entities;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -37,8 +38,8 @@ namespace UnitTestsControllers
             _context = await GetDatabaseContext();
 
             _noteDTOs = new List<NoteDTO> {
-                new NoteDTO { NoteId = 1, Title = "Note1", Content = "Content1", CategoryId = 1, UserId = "user1" },
-                new NoteDTO { NoteId = 2, Title = "Note2", Content = "Content2", CategoryId = 2, UserId = "user2" }
+                new NoteDTO { NoteId = 1, Title = "Note1", Content = "Content1", ImagePath = "path1.jpg", CategoryId = 1, UserId = "user1" },
+                new NoteDTO { NoteId = 2, Title = "Note2", Content = "Content2", ImagePath = "path2.jpg", CategoryId = 2, UserId = "user1" }
             };
 
             _createNoteDTO = new CreateNoteDTO
@@ -64,10 +65,26 @@ namespace UnitTestsControllers
             var noteRepository = new NoteRepository(_context);
 
             _mapperMock.Setup(m => m.Map<IEnumerable<NoteDTO>>(It.IsAny<IEnumerable<Note>>()))
-                .Returns((IEnumerable<Note> source) => source.Select(s => new NoteDTO { NoteId = s.NoteId, Title = s.Title, Content = s.Content, UserId = s.UserId, CategoryId = s.CategoryId }));
+                .Returns((IEnumerable<Note> source) => source.Select(s => new NoteDTO
+                {
+                    NoteId = s.NoteId,
+                    Title = s.Title,
+                    Content = s.Content,
+                    UserId = s.UserId,
+                    CategoryId = s.CategoryId,
+                    ImagePath = s.ImagePath
+                }));
 
             _mapperMock.Setup(m => m.Map<NoteDTO>(It.IsAny<Note>())).Returns((Note note) =>
-                note != null ? new NoteDTO { NoteId = note.NoteId, Title = note.Title, Content = note.Content, UserId = note.UserId, CategoryId = note.CategoryId } : null);
+                note != null ? new NoteDTO
+                {
+                    NoteId = note.NoteId,
+                    Title = note.Title,
+                    Content = note.Content,
+                    UserId = note.UserId,
+                    CategoryId = note.CategoryId,
+                    ImagePath = note.ImagePath
+                } : null);
 
             _mapperMock.Setup(m => m.Map<Note>(It.IsAny<CreateNoteDTO>())).Returns((CreateNoteDTO dto) =>
                 new Note { Title = dto.Title, Content = dto.Content, CategoryId = dto.CategoryId, UserId = "user1", ImagePath = "default/path.jpg" });
@@ -112,7 +129,7 @@ namespace UnitTestsControllers
                 context.Notes.AddRange
                 (
                     new Note { NoteId = 1, Title = "Note1", Content = "Content1", ImagePath = "path1.jpg", CategoryId = 1, UserId = "user1" },
-                    new Note { NoteId = 2, Title = "Note2", Content = "Content2", ImagePath = "path2.jpg", CategoryId = 2, UserId = "user2" }
+                    new Note { NoteId = 2, Title = "Note2", Content = "Content2", ImagePath = "path2.jpg", CategoryId = 2, UserId = "user1" }
                 );
                 await context.SaveChangesAsync();
             }
@@ -134,8 +151,9 @@ namespace UnitTestsControllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsAssignableFrom<IEnumerable<NoteDTO>>(okResult.Value).ToList();
-            Assert.Single(returnValue);
+            Assert.Equal(2, returnValue.Count);
             Assert.Equal("user1", returnValue[0].UserId);
+            Assert.Equal("path1.jpg", returnValue[0].ImagePath); // Check ImagePath
         }
 
         [Fact]
@@ -151,6 +169,7 @@ namespace UnitTestsControllers
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<NoteDTO>(okResult.Value);
             Assert.Equal(noteId, returnValue.NoteId);
+            Assert.Equal("path1.jpg", returnValue.ImagePath); // Check ImagePath
         }
 
         [Fact]
