@@ -92,7 +92,6 @@ namespace Notepad.BusinessLogic
             {
                 await _noteRepository.DeleteAsync(note);
             }
-
         }
 
 
@@ -105,6 +104,12 @@ namespace Notepad.BusinessLogic
             {
                 throw new KeyNotFoundException("Note not found");
             }
+
+            if (!string.IsNullOrEmpty(note.ImagePath))
+            {
+                await _fileManager.DeleteImageAsync(note.ImagePath);
+            }
+
             if (noteUpdateImageDto.Image != null)
             {
                 note.ImagePath = await _fileManager.SaveImageAsync(noteUpdateImageDto.Image);

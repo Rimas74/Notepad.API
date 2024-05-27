@@ -79,6 +79,7 @@ namespace UnitTestsBusinessLogic
             });
 
             _fileManagerMock.Setup(fm => fm.SaveImageAsync(It.IsAny<IFormFile>())).ReturnsAsync("path/to/image.jpg");
+            _fileManagerMock.Setup(fm => fm.DeleteImageAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
 
             _noteService = new NoteService(noteRepositoryMock, _fileManagerMock.Object, _mapperMock.Object, _loggerMock.Object);
         }
@@ -200,6 +201,8 @@ namespace UnitTestsBusinessLogic
         {
             //Arrange
             var noteId = 1;
+            var note = await _context.Notes.FindAsync(noteId);
+            var existingImagePath = note.ImagePath;
 
             //Act
             await _noteService.UpdateNoteImageAsync(noteId, _noteUpdateImageDTO, "user1");
@@ -207,6 +210,8 @@ namespace UnitTestsBusinessLogic
             //Assert
             var updatedNote = await _context.Notes.FindAsync(noteId);
             Assert.Equal("path/to/image.jpg", updatedNote.ImagePath);
+            _fileManagerMock.Verify(fm => fm.DeleteImageAsync(existingImagePath), Times.Once);
+            _fileManagerMock.Verify(fm => fm.SaveImageAsync(_noteUpdateImageDTO.Image), Times.Once);
         }
 
         [Fact]

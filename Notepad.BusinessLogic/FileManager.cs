@@ -36,6 +36,15 @@ namespace Notepad.BusinessLogic
             return filePath;
         }
 
+        public async Task DeleteImageAsync(string imagePath)
+        {
+            var filePath = Path.Combine(_basePath, imagePath);
 
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                _logger.LogInformation("Deleted image at {filePath}", filePath);
+            }
+        }
     }
 }
