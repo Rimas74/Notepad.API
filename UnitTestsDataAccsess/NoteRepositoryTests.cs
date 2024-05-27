@@ -69,7 +69,7 @@ namespace UnitTestsDataAccess
         {
             var notes = await _repository.GetAll("user1").ToListAsync();
 
-            Assert.Single(notes); // Only notes for user1
+            Assert.Single(notes);
         }
 
         [Fact]
