@@ -17,7 +17,7 @@ namespace Notepad.BusinessLogic
             if (!Directory.Exists(_basePath))
             {
                 Directory.CreateDirectory(_basePath);
-                _logger.LogInformation("Created directory at {_basePath}", _basePath);
+                _logger.LogInformation($"Created directory at {_basePath}");
             }
 
         }
@@ -26,7 +26,7 @@ namespace Notepad.BusinessLogic
             var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_{Path.GetFileName(file.FileName)}";
             var filePath = Path.Combine(_basePath, fileName);
 
-            _logger.LogInformation("Saving image to {filePath}", filePath);
+            _logger.LogInformation($"Saving image to {filePath}");
 
 
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -43,7 +43,7 @@ namespace Notepad.BusinessLogic
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
-                _logger.LogInformation("Deleted image at {filePath}", filePath);
+                _logger.LogInformation($"Deleted image at {filePath}");
             }
         }
     }

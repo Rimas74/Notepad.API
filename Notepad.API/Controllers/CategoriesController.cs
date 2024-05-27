@@ -41,13 +41,7 @@ namespace Notepad.API.Controllers
         }
 
 
-        //[HttpGet("user/{userId}")]
-        //public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesByUserIdAsync(string userId)
-        //{
-        //    var Id = HttpContext.User.Claims.FirstOrDefault(u => u.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        //    var categories = await _categoryService.GetCategoriesByUserIdAsync(userId);
-        //    return Ok(categories);
-        //}
+
 
         [HttpPost]
         [Consumes("application/json")]

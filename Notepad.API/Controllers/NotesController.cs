@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace Notepad.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class NotesController : ControllerBase
@@ -52,7 +53,7 @@ namespace Notepad.API.Controllers
         //}
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<NoteDTO>> CreateNote([FromForm] CreateNoteDTO createNoteDto)
         {
@@ -66,7 +67,7 @@ namespace Notepad.API.Controllers
         }
 
         [HttpPut("{id}/details")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateNoteDetails(int id, [FromBody] NoteUpdateDTO noteUpdateDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -82,7 +83,7 @@ namespace Notepad.API.Controllers
         }
 
         [HttpPut("{id}/image")]
-        [Authorize]
+        //[Authorize]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateNoteImage(int id, [FromForm] NoteUpdateImageDTO noteUpdateImageDto)
         {
@@ -98,7 +99,7 @@ namespace Notepad.API.Controllers
             return NoContent();
         }
         [HttpDelete("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteNote(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
