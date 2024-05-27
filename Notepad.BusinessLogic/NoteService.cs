@@ -44,21 +44,21 @@ namespace Notepad.BusinessLogic
 
         public async Task<IEnumerable<NoteDTO>> GetNotesByUserIdAsync(string userId)
         {
-            _logger.LogInformation("Getting notes for userId={userId}", userId);
+            _logger.LogInformation($"Getting notes for userId={userId}");
             var notes = await _noteRepository.GetNotesByUserIdAsync(userId);
             return _mapper.Map<IEnumerable<NoteDTO>>(notes);
         }
 
         public async Task<NoteDTO> GetNoteByIdAsync(int id, string userId)
         {
-            _logger.LogInformation($"Getting note by id={id}", id);
+            _logger.LogInformation($"Getting note by id={id}");
             var note = await _noteRepository.GetByIdAsync(id, userId);
             return _mapper.Map<NoteDTO>(note);
         }
 
         public async Task<NoteDTO> CreateNoteAsync(CreateNoteDTO createNoteDto, string userId)
         {
-            _logger.LogInformation("Creating note for userId={userId}", userId);
+            _logger.LogInformation($"Creating note for userId={userId}");
             var note = _mapper.Map<Note>(createNoteDto);
             note.UserId = userId;
 
@@ -99,7 +99,7 @@ namespace Notepad.BusinessLogic
 
         public async Task UpdateNoteImageAsync(int noteId, NoteUpdateImageDTO noteUpdateImageDto, string userId)
         {
-            _logger.LogInformation("Updating image of note id={noteId}", noteId);
+            _logger.LogInformation($"Updating image of note id={noteId}");
             var note = await _noteRepository.GetByIdAsync(noteId, userId);
             if (note == null)
             {
